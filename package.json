@@ -1,0 +1,26 @@
+{
+  "name": "deployment-test",
+  "version": "0.0.0-development",
+  "description": "Test",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "semantic-release": "semantic-release"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/osnoser1/deployment-test.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/osnoser1/deployment-test/issues"
+  },
+  "homepage": "https://github.com/osnoser1/deployment-test#readme",
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "devDependencies": {
+    "semantic-release": "^21.0.2"
+  }
+}
