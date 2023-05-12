@@ -15,6 +15,15 @@ jobs:
           git config user.name "Github Actions"
           git config user.email "development@mavity.co"
 
+      - name: Merge PR from latest release into main
+        run: |
+          LATEST_RELEASE_BRANCH=$(git branch -r | grep 'origin/release/' | sort -V | tail -1 | cut -d '/' -f 2-)
+          echo "Latest release branch is $LATEST_RELEASE_BRANCH"
+          PR_NUMBER=$(gh pr list --base main --label "$LATEST_RELEASE_BRANCH" --json number --jq ".[0].number")
+          gh pr merge $PR_NUMBER --squash --admin
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
