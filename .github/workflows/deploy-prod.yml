@@ -29,3 +29,6 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           allow-initial-development-versions: "true"
+
+      - name: Push tags
+        run: git push --tags
