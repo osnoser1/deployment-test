@@ -52,4 +52,4 @@ jobs:
           NEW_VERSION=${{ steps.calculate-version.outputs.version }}
           gh pr create --base main --head release/v$NEW_VERSION --title "release: v$NEW_VERSION" --body "Release PR for v$NEW_VERSION"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT }}
