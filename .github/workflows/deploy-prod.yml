@@ -1,5 +1,9 @@
 name: Production Deployment
-on: workflow_dispatch
+
+on:
+  push:
+    tags:
+      - v*.*.*
 
 jobs:
   release:
@@ -19,13 +23,3 @@ jobs:
         run: |
           git config user.name "Github Actions"
           git config user.email "development@mavity.co"
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.16.0
-
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
