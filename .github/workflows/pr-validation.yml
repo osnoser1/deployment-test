@@ -18,8 +18,9 @@ jobs:
 
       - name: Install dependencies and configure
         run: |
-          npm install -g @commitlint/cli @commitlint/config-angular commitlint-plugin-function-rules
-          echo "const typeEnum = require('@commitlint/config-angular-type-enum'); module.exports = {extends: ['@commitlint/config-angular'], plugins: ['commitlint-plugin-function-rules'], rules: {'scope-case': [0],'function-rules/scope-case': [2, 'always', parsed => !parsed.scope || /^MV-\d+$/.test(parsed.scope) ? [true] : [false, 'scope has to be the format MV-X where X is a number']], 'type-enum': [...typeEnum, 'release', 'chore']}}" > commitlint.config.js
+          npm init -y
+          npm install -D @commitlint/cli @commitlint/config-angular @commitlint/config-angular-type-enum commitlint-plugin-function-rules
+          echo "const types = require('@commitlint/config-angular-type-enum'); module.exports = {extends: ['@commitlint/config-angular'], plugins: ['commitlint-plugin-function-rules'], rules: {'scope-case': [0],'function-rules/scope-case': [2, 'always', parsed => !parsed.scope || /^MV-\d+$/.test(parsed.scope) ? [true] : [false, 'scope has to be the format MV-X where X is a number']], 'type-enum': [2, 'always', [...types.value(), 'release', 'chore']]}}" > commitlint.config.js
 
       - name: Lint PR title
         run: |
