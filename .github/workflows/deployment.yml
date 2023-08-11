@@ -3,6 +3,8 @@ name: Manual Deployment Action
 on:
   workflow_dispatch:
 
+env:
+  GH_TOKEN: ${{ github.token }}
 jobs:
   deploy:
     runs-on: ubuntu-latest
