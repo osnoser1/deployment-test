@@ -1,0 +1,20 @@
+name: Staging Deployment
+
+on:
+  push:
+    branches:
+      - hotfix/*
+      - release/*
+    tags:
+      - v*.*.*
+
+env:
+  NODE_VERSION: '18.16.0'
+  ENV: 'staging'
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
