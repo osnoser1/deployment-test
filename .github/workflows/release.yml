@@ -18,33 +18,28 @@ jobs:
         run: |
           LAST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
           IFS='.' read -ra PARTS <<< "$LAST_TAG"
+          IFS='R' read -ra RELEASE_PARTS <<< "${PARTS[2]}"
 
           CURRENT_YEAR=$(date +'%y')
           CURRENT_MONTH=$(date +'%-m')  # This will ensure there's no leading zero
 
-          # Extract year and month from the last tag, considering 'v' prefix for year.
-          LAST_TAG_YEAR=${PARTS[0]#v}
-          LAST_TAG_MONTH="${PARTS[1]}"
-
-          if [[ "$LAST_TAG_YEAR" == "$CURRENT_YEAR" && "$LAST_TAG_MONTH" == "$CURRENT_MONTH" ]]; then
-              # We're in the same month as the last tag. Increment the R-number.
-              IFS='R' read -ra RELEASE_PARTS <<< "${PARTS[2]}"
-              NEW_R_NUM=$((${RELEASE_PARTS[1]} + 1))
+          if [[ "${PARTS[0]#v}" == "$CURRENT_YEAR" && "${PARTS[1]}" == "$CURRENT_MONTH" ]]; then
+            # We're in the same month as the last tag. Increment the R-number.
+            NEW_R_NUM=$((${RELEASE_PARTS[1]} + 1))
           else
-              # New month or year. Reset the R-number to 1.
-              NEW_R_NUM=1
+            # New month or year. Reset the R-number to 1.
+            NEW_R_NUM=1
           fi
 
           NEW_VERSION="$CURRENT_YEAR.$CURRENT_MONTH.R$NEW_R_NUM"
           echo "New Version: $NEW_VERSION"
           echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Install jq
-        run: sudo apt-get install -y jq
-
       - name: Update package.json and package-lock.json
         run: |
           NEW_VERSION=${{ steps.calculate-version.outputs.version }}
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
           git checkout -b release/v$NEW_VERSION
           jq '.version = "'"$NEW_VERSION"'"' package.json > tmp.json && mv tmp.json package.json
           jq '.version = "'"$NEW_VERSION"'"' package-lock.json > tmp.json && mv tmp.json package-lock.json
@@ -56,3 +51,5 @@ jobs:
         run: |
           NEW_VERSION=${{ steps.calculate-version.outputs.version }}
           gh pr create --base main --head release/v$NEW_VERSION --title "release: v$NEW_VERSION" --body "Release PR for v$NEW_VERSION"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
