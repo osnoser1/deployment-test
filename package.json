@@ -1,6 +1,6 @@
 {
   "name": "deployment-test",
-  "version": "0.0.0-development",
+  "version": "23.8.R2",
   "description": "Test",
   "main": "index.js",
   "scripts": {
