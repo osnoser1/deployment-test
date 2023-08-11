@@ -39,12 +39,11 @@ jobs:
           echo "New Version: $NEW_VERSION"
           echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Install jq
-        run: sudo apt-get install -y jq
-
       - name: Update package.json and package-lock.json
         run: |
           NEW_VERSION=${{ steps.calculate-version.outputs.version }}
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
           git checkout -b release/v$NEW_VERSION
           jq '.version = "'"$NEW_VERSION"'"' package.json > tmp.json && mv tmp.json package.json
           jq '.version = "'"$NEW_VERSION"'"' package-lock.json > tmp.json && mv tmp.json package-lock.json
@@ -56,3 +55,5 @@ jobs:
         run: |
           NEW_VERSION=${{ steps.calculate-version.outputs.version }}
           gh pr create --base main --head release/v$NEW_VERSION --title "release: v$NEW_VERSION" --body "Release PR for v$NEW_VERSION"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
