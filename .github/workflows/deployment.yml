@@ -6,7 +6,7 @@ on:
 env:
   GH_TOKEN: ${{ secrets.PAT }}
 jobs:
-  deploy:
+  deploy-release:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -48,24 +48,6 @@ jobs:
           TAG_NAME=$(gh pr view $PR_URL --json title -q '.title | sub("release: "; "")')
           gh release create $TAG_NAME --target $LAST_NON_MERGE_COMMIT --generate-notes
 
-      - name: Temporarily allow merge commits using gh CLI
-        run: |
-          gh api \
-            --method PATCH \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            /repos/${{ github.repository }} \
-            -F allow_merge_commit=true
-
       - name: Merge PR into main branch
         run: |
-          gh pr merge $PR_URL --merge
-
-      - name: Restore settings (only allow squash merges) using gh CLI
-        run: |
-          gh api \
-            --method PATCH \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            /repos/${{ github.repository }} \
-            -F allow_merge_commit=false
+          gh pr merge $PR_URL --squash
