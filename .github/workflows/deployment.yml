@@ -30,9 +30,14 @@ jobs:
 
       - name: Validate if PR is mergeable
         run: |
-          PR_STATUS=$(gh pr view $PR_URL --json mergeable -q ".mergeable")
-          echo "PR_STATUS: $PR_STATUS"
-          if [[ "$PR_STATUS" != "MERGEABLE" ]]; then
+          PR_MERGE_DATA=$(gh pr view $PR_URL --json mergeable,mergeStateStatus)
+          MERGEABLE=$(echo "$PR_MERGE_DATA" | jq -r ".mergeable")
+          MERGE_STATE_STATUS=$(echo "$PR_MERGE_DATA" | jq -r ".mergeStateStatus")
+
+          echo "MERGEABLE: $MERGEABLE"
+          echo "MERGE_STATE_STATUS: $MERGE_STATE_STATUS"
+
+          if [[ "$MERGEABLE" != "MERGEABLE" ]] || [[ "$MERGE_STATE_STATUS" != "CLEAN" ]]; then
             echo "PR is not mergeable!"
             exit 1
           fi
