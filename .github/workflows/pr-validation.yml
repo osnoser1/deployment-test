@@ -1,8 +1,8 @@
 name: PR Validation
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, edited]
+  pull_request_target:
+    types: [opened, synchronize, reopened, edited, locked]
 
 env:
   NODE_VERSION: '18.16.0'
