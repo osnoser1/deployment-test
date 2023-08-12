@@ -11,10 +11,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
-
-      - name: Fetch range from main to current HEAD
-        run: |
-          git fetch origin main --depth=1
+        with:
+          fetch-depth: 0
 
       - name: Find open release PR
         id: find_pr
@@ -42,15 +40,12 @@ jobs:
             exit 1
           fi
 
-      - name: Checkout PR branch
-        run: |
-          PR_BRANCH=$(gh pr view $PR_URL --json headRefName -q '.headRefName')
-          git fetch origin $PR_BRANCH:$PR_BRANCH
-          git checkout $PR_BRANCH
-
       - name: Identify last non-merge commit
         run: |
-          LAST_NON_MERGE_COMMIT=$(git log origin/main..HEAD --no-merges --format="%H" -n 1)
+          PR_BRANCH=$(gh pr view $PR_URL --json headRefName -q '.headRefName')
+          COMMITS=$(git log origin/main..origin/$PR_BRANCH --no-merges --format="%H" -n 1)
+          mapfile -t COMMIT_ARRAY <<< "$COMMITS"
+          LAST_NON_MERGE_COMMIT=$(echo "${COMMIT_ARRAY[0]}" | awk '{print $1}')
           echo "LAST_NON_MERGE_COMMIT=$LAST_NON_MERGE_COMMIT" >> $GITHUB_ENV
 
       - name: Make GitHub release
