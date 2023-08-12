@@ -1,7 +1,7 @@
 {
   "name": "deployment-test",
   "version": "23.8.R9",
-  "description": "Test 1",
+  "description": "Test",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
