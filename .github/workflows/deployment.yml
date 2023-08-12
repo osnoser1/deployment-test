@@ -37,6 +37,12 @@ jobs:
             exit 1
           fi
 
+      - name: Checkout PR branch
+        run: |
+          PR_BRANCH=$(gh pr view $PR_URL --json headRefName -q '.headRefName')
+          git fetch origin $PR_BRANCH:$PR_BRANCH
+          git checkout $PR_BRANCH
+
       - name: Identify last non-merge commit
         run: |
           LAST_NON_MERGE_COMMIT=$(git log main..HEAD --no-merges --format="%H" -n 1)
