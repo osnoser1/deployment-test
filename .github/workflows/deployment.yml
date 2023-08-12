@@ -69,5 +69,3 @@ jobs:
             -H "X-GitHub-Api-Version: 2022-11-28" \
             /repos/${{ github.repository }} \
             -F allow_merge_commit=false
-
-    # Restore repo settings to only allow squash merges.
