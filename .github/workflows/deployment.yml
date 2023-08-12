@@ -14,7 +14,7 @@ jobs:
 
       - name: Fetch range from main to current HEAD
         run: |
-          git fetch origin main:main --depth=1
+          git fetch origin main --depth=1
 
       - name: Find open release PR
         id: find_pr
@@ -45,7 +45,7 @@ jobs:
 
       - name: Identify last non-merge commit
         run: |
-          LAST_NON_MERGE_COMMIT=$(git log main..HEAD --no-merges --format="%H" -n 1)
+          LAST_NON_MERGE_COMMIT=$(git log origin/main..HEAD --no-merges --format="%H" -n 1)
           echo "LAST_NON_MERGE_COMMIT=$LAST_NON_MERGE_COMMIT" >> $GITHUB_ENV
 
       - name: Make GitHub release
