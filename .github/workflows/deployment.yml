@@ -58,12 +58,7 @@ jobs:
 
       - name: Temporarily allow merge commits using gh CLI
         run: |
-          gh api \
-            --method PATCH \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            /repos/${{ github.repository }} \
-            -F allow_merge_commit=true
+          gh api --method PATCH /repos/${{ github.repository }} -F allow_merge_commit=true
 
       - name: Merge PR into main branch
         run: |
@@ -71,9 +66,4 @@ jobs:
 
       - name: Restore settings (only allow squash merges) using gh CLI
         run: |
-          gh api \
-            --method PATCH \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            /repos/${{ github.repository }} \
-            -F allow_merge_commit=false
+          gh api --method PATCH /repos/${{ github.repository }} -F allow_merge_commit=false
