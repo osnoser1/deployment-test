@@ -16,10 +16,9 @@ jobs:
           echo "RELEASE_NOTE_JSON=$RELEASE_NOTE" >> $GITHUB_ENV
           echo $RELEASE_NOTE
 
-      - name: Send Release Notification to Slack
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          payload: |
+      - name: Send Release Notification to Slack using curl
+        run: |
+          PAYLOAD=$(cat <<- EOM
             {
               "text": "New release is out: ${{ github.event.release.name }}",
               "blocks": [
@@ -32,6 +31,6 @@ jobs:
                 }
               ]
             }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+          EOM
+          )
+          curl -X POST -H 'Content-type: application/json' --data "$PAYLOAD" ${{ secrets.SLACK_WEBHOOK_URL }}
