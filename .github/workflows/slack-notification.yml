@@ -9,6 +9,13 @@ jobs:
   notify_slack:
     runs-on: ubuntu-latest
     steps:
+      - name: Prepare Release Note
+        id: prepare
+        run: |
+          RELEASE_NOTE=$(echo "${{ github.event.release.body }}" | jq -R --slurp | jq -c .)
+          echo "RELEASE_NOTE_JSON=$RELEASE_NOTE" >> $GITHUB_ENV
+          echo $RELEASE_NOTE
+
       - name: Send Release Notification to Slack
         uses: slackapi/slack-github-action@v1.24.0
         with:
@@ -20,7 +27,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*${{ github.event.release.name }}* - Release Notes\n${{ toJson(github.event.release.body) }}\n\n<${{ github.event.release.html_url }}|View Release on GitHub>"
+                    "text": "*${{ github.event.release.name }}* - Release Notes\n${{ env.RELEASE_NOTE_JSON }}\n\n<${{ github.event.release.html_url }}|View Release on GitHub>"
                   }
                 }
               ]
