@@ -9,15 +9,10 @@ jobs:
   notify_slack:
     runs-on: ubuntu-latest
     steps:
-      - name: Prepare Release Note
-        id: prepare
+      - name: Send Release Notification to Slack
         run: |
-          RELEASE_NOTE=$(echo "${{ github.event.release.body }}" | jq -R --slurp | jq -c .)
-          echo "RELEASE_NOTE_JSON=$RELEASE_NOTE" >> $GITHUB_ENV
-          echo $RELEASE_NOTE
-
-      - name: Send Release Notification to Slack using curl
-        run: |
+          RELEASE_BODY_ESCAPED=${{ github.event.release.body }}
+          RELEASE_BODY_ESCAPED="${RELEASE_BODY_ESCAPED//\"/\\\"}" # Escape double quotes
           PAYLOAD=$(cat <<- EOM
             {
               "text": "New release is out: ${{ github.event.release.name }}",
@@ -26,11 +21,11 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*${{ github.event.release.name }}* - Release Notes\n${{ toJson(github.event.release.body) }}\n\n<${{ github.event.release.html_url }}|View Release on GitHub>"
+                    "text": "*${{ github.event.release.name }}* - Release Notes\n$RELEASE_BODY_ESCAPED\n\n<${{ github.event.release.html_url }}|View Release on GitHub>"
                   }
                 }
               ]
             }
           EOM
           )
-          curl -X POST -H 'Content-type: application/json' --data "$PAYLOAD" ${{ secrets.SLACK_WEBHOOK_URL }}
+          curl -X POST -H 'Content-type: application/json' --data "$PAYLOAD" ${{ secrets.SLACK_WEBHOOK_URL }} --fail
