@@ -26,7 +26,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*${{ github.event.release.name }}* - Release Notes\n${{ env.RELEASE_NOTE_JSON }}\n\n<${{ github.event.release.html_url }}|View Release on GitHub>"
+                    "text": "*${{ github.event.release.name }}* - Release Notes\n${{ toJson(github.event.release.body) }}\n\n<${{ github.event.release.html_url }}|View Release on GitHub>"
                   }
                 }
               ]
