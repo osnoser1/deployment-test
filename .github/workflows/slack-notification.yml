@@ -12,7 +12,7 @@ jobs:
       - name: Prepare Release Note
         id: prepare
         run: |
-          RELEASE_NOTE=$(echo "${{ github.event.release.body }}" | jq -R --slurp)
+          RELEASE_NOTE=$(echo "${{ github.event.release.body }}" | jq -R --slurp | jq -c .)
           echo "RELEASE_NOTE_JSON=$RELEASE_NOTE" >> $GITHUB_ENV
 
       - name: Send Release Notification to Slack
