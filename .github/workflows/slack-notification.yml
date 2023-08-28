@@ -12,10 +12,7 @@ jobs:
       - name: Prepare Release Note
         id: prepare
         run: |
-          RELEASE_NOTE=$(python3 -c "import sys, json; print(json.dumps(sys.stdin.read()))" <<EOF
-          ${{ github.event.release.body }}
-          EOF
-          )
+          RELEASE_NOTE=$(echo "${{ github.event.release.body }}" | python3 -c "import sys, json; print(json.dumps(sys.stdin.read()))")
           echo "RELEASE_NOTE_JSON=$RELEASE_NOTE" >> $GITHUB_ENV
 
       - name: Send Release Notification to Slack
