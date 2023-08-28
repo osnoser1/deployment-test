@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Send Release Notification to Slack
         run: |
-          RELEASE_BODY_ESCAPED=$(echo '${{ github.event.release.body }}' | python3 -c "import sys, json; print(json.dumps(sys.stdin.read()))")
+          RELEASE_BODY_ESCAPED=$(python3 -c "import json, sys; print(json.dumps(sys.argv[1]))" "${{ github.event.release.body }}")
           PAYLOAD=$(cat <<- EOM
             {
               "text": "New release is out: ${{ github.event.release.name }}",
