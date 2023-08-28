@@ -13,7 +13,9 @@ jobs:
         id: prepare
         run: |
           RELEASE_NOTE="${{ github.event.release.body }}"
-          echo "RELEASE_NOTE=${RELEASE_NOTE//[$'\t\r\n']}___NEWLINE___" >> $GITHUB_ENV
+          # Convert newlines to \n
+          ESCAPED_RELEASE_NOTE=$(echo "$RELEASE_NOTE" | sed ':a;N;$!ba;s/\n/\\n/g')
+          echo "ESCAPED_RELEASE_NOTE=$ESCAPED_RELEASE_NOTE" >> $GITHUB_ENV
 
       - name: Send Release Notification to Slack
         uses: slackapi/slack-github-action@v1.24.0
@@ -26,7 +28,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*${{ github.event.release.name }}* - Release Notes\n${{ env.RELEASE_NOTE }}\n\n<${{ github.event.release.html_url }}|View Release on GitHub>"
+                    "text": "*${{ github.event.release.name }}* - Release Notes\n${{ env.ESCAPED_RELEASE_NOTE }}\n\n<${{ github.event.release.html_url }}|View Release on GitHub>"
                   }
                 }
               ]
